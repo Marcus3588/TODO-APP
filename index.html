@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>TODO-APP</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<div class="container">
+		<h2>Todo List</h2>
+
+		<div class="theme-switch">
+			<label>
+				<input type="checkbox" id="themeToggle">
+				<span class="slider"></span>
+			</label>
+		</div>
+
+		<div class="todo-input">
+			<input type="text"  id="newTask" placeholder="Add a new task">
+			<button id="addTask" >Add Task</button>
+		</div>
+
+		<ul id="todoList"></ul>
+
+		<div class="filters">
+			<button data-filter="all" class="active">All</button>
+			<button data-filter="active">Active</button>
+			<button data-filter="completed">Completed</button>
+		</div>
+	</div>
+	<script type="module">
+	    import {initApp} from './JS/app.js';
+		import {initTheme} from './JS/themeToggle.js';
+		import {initFilters} from './JS/filters.js';
+
+		initApp();
+		initTheme();
+		initFilters();
+		</script>
+</body>
+</html>
