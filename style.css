@@ -1,9 +1,9 @@
 :root{
-	--background: #101114;
-	--primary-color: #1c1d20;
-	--secondary-color: #4a4d57;
-	--accent-color: #00ffc4;
-	--text-color: #f9f9f9;
+	--background: #0a0f1e;
+	--primary-color: #141b2d;
+	--secondary-color: #2b3a55;
+	--accent-color: #00e5ff;
+	--text-color: #e2e8f0;
 }
 
 *{
@@ -18,7 +18,7 @@ html{
 }
 
 body{
-	min-width: 100vh;
+	min-height: 100vh;
 	padding: 10px;
 	background-color: var(--background);
 	display: flex;
@@ -156,4 +156,10 @@ input[type="checkbox"]{
 		font-size: 15vw;
 		
 	}
+}
+
+
+.icon {
+	width: 14px;
+	height: 14px;
 }

@@ -1,57 +1,88 @@
-import { toggleTheme} from './themeToggle.js';
-import  {saveTasks, loadTasks} from './storage.js';
-import {applyFilter} from './filters.js'
+const todoForm = document.querySelector('#todo-form');
+const todoInput = document.getElementById('todo-input');
+const todoListUL = document.getElementById('todo-list');
 
-const taskInput = document.getElementById('newTask');
-const addTaskBtn = document.getElementById('addTask')
-const todoList = document.getElementById('todoList');
-let tasks = loadTasks()
+let allTodos = getTodos();
+updateTodoLists();
 
-function renderTasks(filter = 'all') {
-	todoList.innerHTML = '';
-	tasks
-	.filter(task => applyFilter (task ,filter))
-	.forEach((task, index)=>{
-		const li =  document.createElement('li');
-		li.classList.toggle('completed',task.completed);
-		li.innerHTML = `
-		<span>${task.text}</span>
-		<div> 
-		  <button onclick="toggleTask(${index})"></button>
-		  <button onclick="deleteTask(${index})"></button>
-		</div>
-		`;
-		todoList.appendChild(li);
-	});
-	saveTasks(tasks);
-}
 
-window.toggleTask = (index) =>{
-	tasks[index].completed = !tasks[index].completed;
-	renderTasks();
-}
-
-window.deleteTask = (index) =>{
-	tasks.splice(index,1);
-	renderTasks
-}
-
-addTaskBtn.addEventListener('click',() => {
-	const text = taskInput.ariaValueMax.trim();
-	if(text) {
-		tasks.push({text,completed:false})
-		taskInput.value = '';
-		renderTasks();
-	}
+todoForm.addEventListener('submit', function(e){
+	e.preventDefault();
+	addTodo();
 })
 
-document.querySelectorAll('.filters button').forEach(btn => {
-	btn.addEventListener('click' ,() => {
-		document.querySelector('.filters button.active')?.classList.remove('active');
-		btn.classList.add('active');
-		renderTasks(btn.dataset.filter);
-	});
-});
+function addTodo(){
+	const todoText = todoInput.value.trim();
+	if(todoText.length > 0) {
+		const todoObject = {
+			text: todoText,
+			completed: false
+		};
+		allTodos.push(todoObject);
+		updateTodoLists();
+		saveTodos();
+		todoInput.value = '';
+	}
+}
 
-toggleTheme();
-renderTasks();
+
+function createTodoItem(todo, todoIndex){
+	const todoId = `todo-${todoIndex}`;
+	const todoLI = document.createElement('li');
+	todoLI.className = 'todo';
+	todoLI.id = todoId;
+
+
+	todoLI.innerHTML = `
+	
+  <input type="checkbox" id="${todoId}-check" ${todo.completed ? 'checked' : ''}>
+  <label for="${todoId}-check" class="custom-checkbox">
+    <svg class="icon"><use href="#check"></use></svg>
+  </label>
+  <label for="${todoId}-check" class="todo-text ${todo.completed ? 'completed' : ''}">
+    ${todo.text}
+  </label>
+  <button class="delete-button">
+    <svg class="icon"><use href="#delete"></use></svg>
+  </button>
+	`
+	const deleteButton = todoLI.querySelector('.delete-button');
+	deleteButton.addEventListener('click',()=>{
+		deleteTodoItem(todoIndex);
+	})
+
+
+	const checkBox = todoLI.querySelector("input")
+	checkBox.addEventListener('change', () => {
+		allTodos[todoIndex].completed = checkBox.checked;
+		saveTodos();
+		updateTodoLists();
+	})
+	return todoLI;
+}
+
+function updateTodoLists(){
+	todoListUL.innerHTML = '';
+	allTodos.forEach((todo, todoIndex) => {
+		 const todoItem = createTodoItem(todo,todoIndex);
+		 todoListUL.appendChild(todoItem);
+	});
+}
+
+function deleteTodoItem(todoIndex) {
+	allTodos = allTodos.filter((_, i) => i !== todoIndex);
+	saveTodos();
+	updateTodoLists();
+}
+
+
+function saveTodos() {
+	const todosJson = JSON.stringify(allTodos);
+	localStorage.setItem('todos', todosJson);
+}
+
+
+function getTodos() {
+	const todos = localStorage.getItem("todos") || "[]";
+	return JSON.parse(todos);
+}
